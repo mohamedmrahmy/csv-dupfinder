@@ -39,12 +39,34 @@ func main() {
 
 	checkdups := findDuplicates(emails)
 	if len(checkdups) == 0 {
-		fmt.Println("No duplicates found")
+		fmt.Println("No duplicates found, and no file is created")
 		return
 	}
 	for _, email := range checkdups {
 		fmt.Println(email)
 	}
+
+	remdups := removeDuplicates(rows)
+
+	outName := strings.TrimSuffix(os.Args[1], ".csv") + "_cleaned.csv"
+	out, err := os.Create(outName)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	defer out.Close()
+
+	writer := csv.NewWriter(out)
+	err = writer.WriteAll(remdups)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Saved", outName, ":", "removed", len(rows)-len(remdups), "duplicate row/s")
+
 }
 
 func findDuplicates(emails []string) []string {
@@ -61,4 +83,20 @@ func findDuplicates(emails []string) []string {
 		}
 	}
 	return dups
+}
+
+func removeDuplicates(rows [][]string) [][]string {
+	seen := map[string]bool{}
+
+	kept := [][]string{rows[0]}
+
+	for _, row := range rows[1:] {
+		email := strings.ToLower(strings.TrimSpace(row[1]))
+		if seen[email] {
+			continue
+		}
+		seen[email] = true
+		kept = append(kept, row)
+	}
+	return kept
 }

@@ -1,6 +1,6 @@
 # csv-dupfinder
 
-Finds duplicate email addresses in a CSV file, even when the same email is typed with different capital letters or extra spaces.
+Finds duplicate email addresses in a CSV file, even when the same email is typed with different capital letters or extra spaces, it removes those duplicates and also saves a cleaned copy.
 
 ## How to run
 
@@ -28,6 +28,8 @@ Build the `.exe`:
 ```
 go build
 ```
+## How duplicates are removed
+When the same email appears more than once, the cleaned file keeps only the first row with that email and removes the later ones. Emails are compared without regard to capital letters or extra spaces, but the rows that are kept are copied exactly as they appear in your file, unchanged and in their original order. Your original file is never modified; the cleaned copy is saved as a new file ending in _cleaned.csv.
 
 ## Example
 
@@ -52,6 +54,7 @@ Output:
 ```
 sara@shop.com
 omar@mail.com
+Saved testdata\messy_cleaned.csv : removed 2 duplicate row/s
 ```
 
 `Sara@Shop.com` was matched with `sara@shop.com` (different capital letters), and ` omar@mail.com` was matched with `omar@mail.com` (an extra space at the start). The tool ignores both kinds of difference before comparing.
@@ -60,8 +63,8 @@ omar@mail.com
 
 | Situation | Output |
 |---|---|
-| Duplicates found | Each duplicate email, one per line |
-| No duplicates | `No duplicates found` |
+| Duplicates found | Each duplicate email, one per line, Saved ..._cleaned.csv : removed N duplicated row/s |
+| No duplicates | `No duplicates found, and no file is created` |
 | No file name given | `Usage: go run . <file.csv>` |
 | File doesn't exist | `Error: open <name>: The system cannot find the file specified.` |
 | Empty file | `Error: No data rows found` |
@@ -70,9 +73,9 @@ omar@mail.com
 
 ## Limitations
 
-- It only checks emails, not whole rows for duplicates.
+- It only checks emails duplicates, not whole rows for duplicates.
 - Emails must be in the second column of the file.
 - The first row must be a header. If a file has no header, the first row of data is skipped.
+- When a file has NO duplicates, NO cleaned file is created.
 - It doesn't show how many times each email appears, or on which rows.
-- It only reports duplicates. It doesn't remove them or create a cleaned file.
 - It doesn't check whether emails are valid (for example, `omar @mail.com`).
