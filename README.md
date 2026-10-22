@@ -67,8 +67,8 @@ Saved testdata\messy_cleaned.csv : removed 2 duplicate row/s
 | No duplicates | `No duplicates found, and no file is created` |
 | No file name given | `Usage: go run . <file.csv>` |
 | File doesn't exist | `Error: open <name>: The system cannot find the file specified.` |
-| Empty file | `Error: No data rows found` |
-| File has only a header row | `Error: No data rows found` |
+| Empty file | `Error: no data rows found` |
+| File has only a header row | `Error: no data rows found` |
 | A row with missing columns | `Error: record on line <n>: wrong number of fields` |
 
 ## Limitations

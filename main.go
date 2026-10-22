@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -14,21 +15,9 @@ func main() {
 		return
 	}
 
-	file, err := os.Open(os.Args[1])
+	rows, err := readCSV(os.Args[1])
 	if err != nil {
 		fmt.Println("Error:", err)
-		return
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	rows, err := reader.ReadAll()
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	if len(rows) < 2 {
-		fmt.Println("Error: No data rows found")
 		return
 	}
 
@@ -99,4 +88,22 @@ func removeDuplicates(rows [][]string) [][]string {
 		kept = append(kept, row)
 	}
 	return kept
+}
+
+func readCSV(path string) ([][]string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	rows, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	if len(rows) < 2 {
+		return nil, errors.New("no data rows found")
+	}
+	return rows, nil
 }
