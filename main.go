@@ -38,17 +38,8 @@ func main() {
 	remdups := removeDuplicates(rows)
 
 	outName := strings.TrimSuffix(os.Args[1], ".csv") + "_cleaned.csv"
-	out, err := os.Create(outName)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
 
-	defer out.Close()
-
-	writer := csv.NewWriter(out)
-	err = writer.WriteAll(remdups)
-
+	err = writeCSV(outName, remdups)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -106,4 +97,19 @@ func readCSV(path string) ([][]string, error) {
 		return nil, errors.New("no data rows found")
 	}
 	return rows, nil
+}
+
+func writeCSV(path string, rows [][]string) error {
+	out, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	writer := csv.NewWriter(out)
+	err = writer.WriteAll(rows)
+	if err != nil {
+		return err
+	}
+	return nil
 }
